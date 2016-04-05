@@ -43,27 +43,26 @@
 		<svg width="100%" height="700"/>
 	</body>
 		<script>
-			d3.select("#edW").on("keyup", buildGrid);
-			d3.select("#edH").on("keyup", buildGrid);
-			d3.select("#edCntLines").on("keyup", buildGrid);
+			d3.select("#edW").on("keyup", setGrid);
+			d3.select("#edH").on("keyup", setGrid);
+			d3.select("#edCntLines").on("keyup", setGrid);
 			
-			d3.select("#edW").on("input", buildGrid);			
-			d3.select("#edH").on("input", buildGrid);			
-			d3.select("#edCntLines").on("input", buildGrid);			
+			d3.select("#edW").on("input", setGrid);
+			d3.select("#edH").on("input", setGrid);
+			d3.select("#edCntLines").on("input", setGrid);
 			
-			function buildGrid(){
+			function setGrid(){
 				var	paddingX = paddingY = 10; 						// отступ сетки / для позиционирования
 				
 				var	wGrid = 	parseInt(d3.select('#edW')[0][0].value, 10),		// ширина сетки
 					hGrid = 	parseInt(d3.select('#edH')[0][0].value, 10),		// высота сетки
 					cntLines = 	parseInt(d3.select('#edCntLines')[0][0].value, 10),	// количество строк
-					wCell = 	wGrid/cntLines, 					// ширина ячейки
+					wCell = 	wGrid/cntLines,						// ширина ячейки
 					hCell = 	hGrid/cntLines;						// высота ячейки
 				
 				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
 				
-				var svg = d3.select('svg');
-				var rect = svg.selectAll('rect').data(d3.range(cntLines*cntLines));
+				var rect = d3.select('svg').selectAll('rect').data(d3.range(cntLines*cntLines));
 				rect.enter().append('rect').transition().duration(500).attr({
 					'x': function (i){ return paddingX + i%cntLines*wCell },
 					'y': function (i){ return paddingY + ~~(i/cntLines)*hCell },
@@ -79,6 +78,6 @@
 				rect.exit().remove();
 			}
 			
-			buildGrid();
+			setGrid();
 		</script>
 </html>
