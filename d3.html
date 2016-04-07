@@ -36,7 +36,7 @@
 	<body>
 		<fieldset>
 			<legend>Настройка сетки</legend>
-			В сетке: <input type="number" id="edCntLines" value="10" min="0" max="99"/><sup>2</sup> ячеек<br/>
+			В сетке: <input type="number" id="edCntLines" value="10" min="1" max="30"/><sup>2</sup> ячеек<br/>
 			Ширина сетки: <input type="number" id="edW" value="400" min="0" max="4000" step="10"/> пикселей<br/>
 			Высота сетки: <input type="number" id="edH" value="400" min="0" max="4000" step="10"/> пикселей
 		</fieldset>
@@ -58,7 +58,10 @@
 					paddingX = paddingLeft + paddingRight,
 					entered_wGrid = parseInt(obj_edW.node().value, 10),
 					widthSVG = parseInt(d3.select('svg').style("width"), 10);
-				if (entered_wGrid + paddingX > widthSVG){
+				
+				if (entered_wGrid < 0)
+					obj_edW.property("value", 0);
+				else if (entered_wGrid + paddingX > widthSVG){
 					obj_edW.property("value", widthSVG - paddingX);
 					return true;
 				} else 
@@ -70,28 +73,51 @@
 					paddingY = paddingTop + paddingBottom,
 					entered_hGrid = parseInt(obj_edH.node().value, 10),
 					heightSVG = parseInt(d3.select('svg').style("height"), 10);
-				if (entered_hGrid + paddingY > heightSVG){
+				
+				if (entered_hGrid < 0)
+					obj_edH.property("value", 0);
+				else if (entered_hGrid + paddingY > heightSVG){
 					obj_edH.property("value", heightSVG - paddingY);
 					return true;
 				} else 
 					return false;
 			}
 			
+			function checkCntLines(max_cntLines){
+				var	obj_edCntLines = d3.select('#edCntLines'),
+					entered_cntLines = parseInt(obj_edCntLines.node().value, 10);
+				
+				if (entered_cntLines < 1)
+					obj_edCntLines.property("value", 1);
+				else if (entered_cntLines > max_cntLines)
+					obj_edCntLines.property("value", max_cntLines);
+			}
+			
 			function setGrid(){
 				var	paddingLeft = paddingTop = 
-					paddingRight = paddingBottom = 10;					// отступ сетки / для позиционирования
+					paddingRight = paddingBottom = 10,					// отступ сетки / для позиционирования
+					max_cntLines = 30;												// максимальное количество строк/ столбцов
+
 				checkWidth(paddingLeft, paddingRight);
 				checkHeight(paddingTop, paddingBottom);
 				
 				var	wGrid = 	parseInt(d3.select('#edW').node().value, 10),		// ширина сетки
 					hGrid = 	parseInt(d3.select('#edH').node().value, 10),		// высота сетки
 					cntLines = 	parseInt(d3.select('#edCntLines').node().value, 10);	// количество строк
+
+				checkCntLines(max_cntLines);
+
 				var	wCell =		wGrid/cntLines,						// ширина ячейки
 					hCell =		hGrid/cntLines;						// высота ячейки
 				
+				var	rect =		d3.select('svg').selectAll('rect').data(d3.range(cntLines*cntLines));
+
+				if (wGrid == 0 || hGrid == 0){
+					rect.remove();
+					return false;
+				}
 				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
 				
-				var	rect = d3.select('svg').selectAll('rect').data(d3.range(cntLines*cntLines));
 				rect.enter().append('rect').transition().duration(500).attr({
 					'x': function (i){ return paddingLeft + i%cntLines*wCell },
 					'y': function (i){ return paddingTop + ~~(i/cntLines)*hCell },
