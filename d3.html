@@ -54,7 +54,7 @@
 			d3.select(window).on('resize', setGrid);
 			
 			function checkWidth(paddingLeft, paddingRight){
-				var obj_edW = d3.select('#edW'),
+				var	obj_edW = d3.select('#edW'),
 					paddingX = paddingLeft + paddingRight,
 					entered_wGrid = parseInt(obj_edW.node().value, 10),
 					widthSVG = parseInt(d3.select('svg').style("width"), 10);
@@ -66,7 +66,7 @@
 			}
 			
 			function checkHeight(paddingTop, paddingBottom){
-				var obj_edH = d3.select('#edH'),
+				var	obj_edH = d3.select('#edH'),
 					paddingY = paddingTop + paddingBottom,
 					entered_hGrid = parseInt(obj_edH.node().value, 10),
 					heightSVG = parseInt(d3.select('svg').style("height"), 10);
@@ -91,7 +91,7 @@
 				
 				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
 				
-				var rect = d3.select('svg').selectAll('rect').data(d3.range(cntLines*cntLines));
+				var	rect = d3.select('svg').selectAll('rect').data(d3.range(cntLines*cntLines));
 				rect.enter().append('rect').transition().duration(500).attr({
 					'x': function (i){ return paddingLeft + i%cntLines*wCell },
 					'y': function (i){ return paddingTop + ~~(i/cntLines)*hCell },
