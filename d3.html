@@ -119,14 +119,14 @@
 				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
 				
 				rect.enter().append('rect').transition().duration(500).attr({
-					'x': function (i){ return paddingLeft + i%cntLines*wCell },
-					'y': function (i){ return paddingTop + ~~(i/cntLines)*hCell },
+					'x': (i) => { return paddingLeft + i%cntLines*wCell },
+					'y': (i) => { return paddingTop + ~~(i/cntLines)*hCell },
 					'width': wCell,
 					'height': hCell
 				});
 				rect.transition().duration(500).attr({
-					'x': function (i){ return paddingLeft + i%cntLines*wCell },
-					'y': function (i){ return paddingTop + ~~(i/cntLines)*hCell },
+					'x': (i) => { return paddingLeft + i%cntLines*wCell },
+					'y': (i) => { return paddingTop + ~~(i/cntLines)*hCell },
 					'width': wCell,
 					'height': hCell
 				});
