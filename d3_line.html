@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Lesson1 by Gleb Pateleyev // Line version</title>
+		<link rel="stylesheet" href="resources/lesson1.css">
+		<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<h2>Рисование с помощью линии и прямоугольника</h2>
+		<fieldset>
+			<legend>Настройка сетки</legend>
+			В сетке: <input type="number" id="edCntLines" value="10" min="1" max="30"/><sup>2</sup> ячеек<br/>
+			Ширина сетки: <input type="number" id="edW" value="400" min="0" max="4000" step="10"/> пикселей<br/>
+			Высота сетки: <input type="number" id="edH" value="400" min="0" max="4000" step="10"/> пикселей
+		</fieldset>
+		<svg width="100%" height="700"/>
+	</body>
+		<script>
+			d3.select("#edW").on("keyup", setGrid);
+			d3.select("#edH").on("keyup", setGrid);
+			d3.select("#edCntLines").on("keyup", setGrid);
+			
+			d3.select("#edW").on("input", setGrid);
+			d3.select("#edH").on("input", setGrid);
+			d3.select("#edCntLines").on("input", setGrid);
+			
+			d3.select(window).on('resize', setGrid);
+			
+			function checkWidth(paddingLeft, paddingRight){
+				var obj_edW = d3.select('#edW'),
+					 paddingX = paddingLeft + paddingRight,
+					 entered_wGrid = parseInt(obj_edW.node().value, 10),
+					 widthSVG = parseInt(d3.select('svg').style("width"), 10);
+				
+				if (entered_wGrid < 0)
+					obj_edW.property("value", 0);
+				else if (entered_wGrid + paddingX > widthSVG){
+					obj_edW.property("value", widthSVG - paddingX);
+					return true;
+				} else 
+					return false;
+			}
+			
+			function checkHeight(paddingTop, paddingBottom){
+				var	obj_edH = d3.select('#edH'),
+					 paddingY = paddingTop + paddingBottom,
+					 entered_hGrid = parseInt(obj_edH.node().value, 10),
+					 heightSVG = parseInt(d3.select('svg').style("height"), 10);
+				
+				if (entered_hGrid < 0)
+					obj_edH.property("value", 0);
+				else if (entered_hGrid + paddingY > heightSVG){
+					obj_edH.property("value", heightSVG - paddingY);
+					return true;
+				} else 
+					return false;
+			}
+			
+			function checkCntLines(max_cntLines){
+				var	obj_edCntLines = d3.select('#edCntLines'),
+					 entered_cntLines = parseInt(obj_edCntLines.node().value, 10);
+				
+				if (entered_cntLines < 1)
+					obj_edCntLines.property("value", 1);
+				else if (entered_cntLines > max_cntLines)
+					obj_edCntLines.property("value", max_cntLines);
+			}
+			
+			function setGrid(){
+				const	paddingLeft = paddingTop = 
+					paddingRight = paddingBottom = 10,							// отступ сетки / для позиционирования
+					max_cntLines = 30;											// максимальное количество строк/ столбцов
+
+			  checkWidth(paddingLeft, paddingRight);
+			  checkHeight(paddingTop, paddingBottom);
+			  checkCntLines(max_cntLines);
+				
+				var	wGrid = 	parseInt(d3.select('#edW').node().value, 10),		// ширина сетки
+			      hGrid = 	parseInt(d3.select('#edH').node().value, 10),		// высота сетки
+			      cntLines = 	parseInt(d3.select('#edCntLines').node().value, 10);// количество строк
+
+				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
+
+				var wCell =		wGrid/cntLines,										// ширина ячейки
+				    hCell =		hGrid/cntLines;										// высота ячейки
+
+
+				var	svg	= d3.select('svg'), 
+				      datum_frame = datum_hLines = datum_vLines = [];
+
+				if (wGrid > 0 && hGrid > 0){
+					datum_frame = d3.range(1);
+					datum_hLines = d3.range(0, hGrid, hCell);
+					datum_vLines = d3.range(0, wGrid, wCell);
+				}
+
+				var	frame = svg.selectAll('rect').data(datum_frame);
+				var	hLines = svg.selectAll('line.hline').data(datum_hLines);
+				var	vLines = svg.selectAll('line.vline').data(datum_vLines);
+				
+				frame.enter().append('rect').transition().duration(500).attr({
+					'x': paddingLeft,
+					'y': paddingTop,
+					'width': wGrid,
+					'height': hGrid
+				});
+				frame.transition().duration(500).attr({
+					'x': paddingLeft,
+					'y': paddingTop,
+					'width': wGrid,
+					'height': hGrid
+				});
+				frame.exit().remove();
+				
+				hLines.enter().append('line').transition().duration(500).attr({
+					'class' : 'hline',
+					'x1': paddingLeft,
+					'y1': (i) => {return paddingTop+i},
+					'x2': paddingLeft+wGrid,
+					'y2': (i) => {return paddingTop+i}
+				});
+				hLines.transition().duration(500).attr({
+					'class' : 'hline',
+					'x1': paddingLeft,
+					'y1': (i) => {return paddingTop+i},
+					'x2': paddingLeft+wGrid,
+					'y2': (i) => {return paddingTop+i}
+				});
+				hLines.exit().remove();
+				
+				vLines.enter().append('line').transition().duration(500).attr({
+					'class' : 'vline',
+					'x1': (i) => {return paddingTop+i},
+					'y1': paddingTop,
+					'x2': (i) => {return paddingTop+i},
+					'y2': paddingTop+hGrid
+				});
+				vLines.transition().duration(500).attr({
+					'class' : 'vline',
+					'x1': (i) => {return paddingTop+i},
+					'y1': paddingTop,
+					'x2': (i) => {return paddingTop+i},
+					'y2': paddingTop+hGrid
+				});
+				vLines.exit().remove();
+			}
+			
+			setGrid();
+		</script>
+</html>
