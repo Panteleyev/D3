@@ -1,112 +1,112 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Lesson1 by Gleb Pateleyev // Rect version</title>
-		<link rel="stylesheet" href="resources/lesson1.css">
-		<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	</head>
-	<body>
-		<h2>Рисование с помощью прямоугольников</h2>
-		<fieldset>
-			<legend>Настройка сетки</legend>
-			В сетке: <input type="number" id="edCntLines" value="10" min="1" max="30"/><sup>2</sup> ячеек<br/>
-			Ширина сетки: <input type="number" id="edW" value="400" min="0" max="4000" step="10"/> пикселей<br/>
-			Высота сетки: <input type="number" id="edH" value="400" min="0" max="4000" step="10"/> пикселей
-		</fieldset>
-		<svg width="100%" height="700"/>
-	</body>
-		<script>
-			d3.select("#edW").on("keyup", setGrid);
-			d3.select("#edH").on("keyup", setGrid);
-			d3.select("#edCntLines").on("keyup", setGrid);
-			
-			d3.select("#edW").on("input", setGrid);
-			d3.select("#edH").on("input", setGrid);
-			d3.select("#edCntLines").on("input", setGrid);
-			
-			d3.select(window).on('resize', setGrid);
-			
-			function checkWidth(paddingLeft, paddingRight){
-				var	obj_edW = d3.select('#edW'),
-					paddingX = paddingLeft + paddingRight,
-					entered_wGrid = parseInt(obj_edW.node().value, 10),
-					widthSVG = parseInt(d3.select('svg').style("width"), 10);
-				
-				if (entered_wGrid < 0)
-					obj_edW.property("value", 0);
-				else if (entered_wGrid + paddingX > widthSVG){
-					obj_edW.property("value", widthSVG - paddingX);
-					return true;
-				} else 
-					return false;
-			}
-			
-			function checkHeight(paddingTop, paddingBottom){
-				var	obj_edH = d3.select('#edH'),
-					paddingY = paddingTop + paddingBottom,
-					entered_hGrid = parseInt(obj_edH.node().value, 10),
-					heightSVG = parseInt(d3.select('svg').style("height"), 10);
-				
-				if (entered_hGrid < 0)
-					obj_edH.property("value", 0);
-				else if (entered_hGrid + paddingY > heightSVG){
-					obj_edH.property("value", heightSVG - paddingY);
-					return true;
-				} else 
-					return false;
-			}
-			
-			function checkCntLines(max_cntLines){
-				var	obj_edCntLines = d3.select('#edCntLines'),
-					entered_cntLines = parseInt(obj_edCntLines.node().value, 10);
-				
-				if (entered_cntLines < 1)
-					obj_edCntLines.property("value", 1);
-				else if (entered_cntLines > max_cntLines)
-					obj_edCntLines.property("value", max_cntLines);
-			}
-			
-			function setGrid(){
-				const	paddingLeft = paddingTop = 
-					paddingRight = paddingBottom = 10,					// отступ сетки / для позиционирования
-					max_cntLines = 30;							// максимальное количество строк/ столбцов
+<head>
+	<meta charset="UTF-8">
+	<title>Lesson1 by Gleb Pateleyev // Rect version</title>
+	<link rel="stylesheet" href="resources/lesson1.css">
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<h2>Рисование с помощью прямоугольников</h2>
+<fieldset>
+	<legend>Настройка сетки</legend>
+	В сетке: <input type="number" id="edCntLines" value="10" min="1" max="30"/><sup>2</sup> ячеек<br/>
+	Ширина сетки: <input type="number" id="edW" value="400" min="0" max="4000" step="10"/> пикселей<br/>
+	Высота сетки: <input type="number" id="edH" value="400" min="0" max="4000" step="10"/> пикселей
+</fieldset>
+<svg width="100%" height="700"/>
+</body>
+<script>
+	d3.select("#edW").on("keyup", setGrid);
+	d3.select("#edH").on("keyup", setGrid);
+	d3.select("#edCntLines").on("keyup", setGrid);
 
-				checkWidth(paddingLeft, paddingRight);
-				checkHeight(paddingTop, paddingBottom);
-				checkCntLines(max_cntLines);
-				
-				var	wGrid = 	parseInt(d3.select('#edW').node().value, 10),		// ширина сетки
-					hGrid = 	parseInt(d3.select('#edH').node().value, 10),		// высота сетки
-					cntLines = 	parseInt(d3.select('#edCntLines').node().value, 10);	// количество строк
+	d3.select("#edW").on("input", setGrid);
+	d3.select("#edH").on("input", setGrid);
+	d3.select("#edCntLines").on("input", setGrid);
 
-				if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))	return false;
+	d3.select(window).on('resize', setGrid);
 
-				var	wCell =		wGrid/cntLines,										// ширина ячейки
-					hCell =		hGrid/cntLines;										// высота ячейки
-				
-				var	datum_rect = [];
-				
-				if (wGrid > 0 && hGrid > 0)
-					datum_rect = d3.range(cntLines*cntLines);
-				
-				var	rect = d3.select('svg').selectAll('rect').data(datum_rect);
-				
-				rect.enter().append('rect').transition().duration(500).attr({
-					'x': (i) => { return paddingLeft + i%cntLines*wCell },
-					'y': (i) => { return paddingTop + ~~(i/cntLines)*hCell },
-					'width': wCell,
+	function checkWidth(paddingLeft, paddingRight) {
+		var obj_edW       = d3.select('#edW'),
+				paddingX      = paddingLeft + paddingRight,
+				entered_wGrid = parseInt(obj_edW.node().value, 10),
+				widthSVG      = parseInt(d3.select('svg').style("width"), 10);
+
+		if (entered_wGrid < 0)
+			obj_edW.property("value", 0);
+		else if (entered_wGrid + paddingX > widthSVG) {
+			obj_edW.property("value", widthSVG - paddingX);
+			return true;
+		} else
+			return false;
+	}
+
+	function checkHeight(paddingTop, paddingBottom) {
+		var obj_edH       = d3.select('#edH'),
+				paddingY      = paddingTop + paddingBottom,
+				entered_hGrid = parseInt(obj_edH.node().value, 10),
+				heightSVG     = parseInt(d3.select('svg').style("height"), 10);
+
+		if (entered_hGrid < 0)
+			obj_edH.property("value", 0);
+		else if (entered_hGrid + paddingY > heightSVG) {
+			obj_edH.property("value", heightSVG - paddingY);
+			return true;
+		} else
+			return false;
+	}
+
+	function checkCntLines(max_cntLines) {
+		var obj_edCntLines   = d3.select('#edCntLines'),
+				entered_cntLines = parseInt(obj_edCntLines.node().value, 10);
+
+		if (entered_cntLines < 1)
+			obj_edCntLines.property("value", 1);
+		else if (entered_cntLines > max_cntLines)
+			obj_edCntLines.property("value", max_cntLines);
+	}
+
+	function setGrid() {
+		const	paddingLeft = paddingTop =
+					paddingRight = paddingBottom = 10,														// отступ сетки / для позиционирования
+					max_cntLines = 30;																						// максимальное количество строк/ столбцов
+
+		checkWidth(paddingLeft, paddingRight);
+		checkHeight(paddingTop, paddingBottom);
+		checkCntLines(max_cntLines);
+
+		var wGrid    = parseInt(d3.select('#edW').node().value, 10),				// ширина сетки
+				hGrid    = parseInt(d3.select('#edH').node().value, 10),				// высота сетки
+				cntLines = parseInt(d3.select('#edCntLines').node().value, 10);	// количество строк
+
+		if (isNaN(wGrid) || isNaN(hGrid) || isNaN(cntLines))  return false;
+
+		var	wCell = wGrid / cntLines,																				// ширина ячейки
+				hCell = hGrid / cntLines;																				// высота ячейки
+
+		var datum_rect = [];
+
+		if (wGrid > 0 && hGrid > 0)
+			datum_rect = d3.range(cntLines * cntLines);
+
+		var rect = d3.select('svg').selectAll('rect').data(datum_rect);
+
+		rect.enter().append('rect').transition().duration(500).attr({
+					'x':      (i) => { return paddingLeft + i%cntLines*wCell },
+					'y':      (i) => { return paddingTop + ~~(i/cntLines)*hCell },
+					'width':  wCell,
 					'height': hCell
-				});
-				rect.transition().duration(500).attr({
-					'x': (i) => { return paddingLeft + i%cntLines*wCell },
-					'y': (i) => { return paddingTop + ~~(i/cntLines)*hCell },
-					'width': wCell,
+		});
+		rect.transition().duration(500).attr({
+					'x':      (i) => { return paddingLeft + i%cntLines*wCell },
+					'y':      (i) => { return paddingTop + ~~(i/cntLines)*hCell },
+					'width':  wCell,
 					'height': hCell
-				});
-				rect.exit().remove();
-			}
-			
-			setGrid();
-		</script>
+		});
+		rect.exit().remove();
+	}
+
+	setGrid();
+</script>
 </html>
