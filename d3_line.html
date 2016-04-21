@@ -2,8 +2,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Lesson1 by Gleb Pateleyev // Line version</title>
-	<link rel="stylesheet" href="resources/lesson1.css">
+	<title>Lesson1 by Gleb Panteleyev // Line version</title>
+	<link rel="stylesheet" href="./resources/lesson1.css">
 	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
@@ -16,6 +16,7 @@
 </fieldset>
 <svg width="100%" height="700"/>
 <script>
+	// type="text/ecmascript-6"
 	d3.select('#edW')
 			.on('keyup', setGrid)
 			.on('input', setGrid);
@@ -35,7 +36,7 @@
 	 */
 	function checkGridWidth(paddingLeft, paddingRight) {
 		var objectGridWidth = d3.select('#edW'),
-				gridWidth       = objectGridWidth.property('value'),
+				gridWidth       = parseInt(objectGridWidth.property('value'), 10),
 				paddingX        = paddingLeft + paddingRight,
 				svgWidth        = d3.select('svg').style('width');
 
@@ -52,7 +53,7 @@
 	 */
 	function checkGridHeight(paddingTop, paddingBottom) {
 		var objectGridHeight = d3.select('#edH'),
-				gridHeight       = objectGridHeight.property('value'),
+				gridHeight       = parseInt(objectGridHeight.property('value'), 10),
 				paddingY         = paddingTop + paddingBottom,
 				svgHeight        = d3.select('svg').style('height');
 
@@ -68,7 +69,7 @@
 	 */
 	function checkLinesCount(linesMaxCount) {
 		var objectLinesCount = d3.select('#edCntLines'),
-				linesCount       = objectLinesCount.property('value');
+				linesCount       = parseInt(objectLinesCount.property('value'), 10);
 
 		if (linesCount < 1)
 			objectLinesCount.property('value', 1);

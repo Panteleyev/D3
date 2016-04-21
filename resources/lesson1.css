@@ -1,30 +1,31 @@
 body, html {
 	margin: 0;
 }
-	
-	h2, fieldset {
-		line-height: 0;
-		margin-left: 7px;
-	}
-	
-	fieldset {
-		border: 1px solid orange;
-	}
-	
-		legend {
-			color: orange;
-		}
-			input {
-				margin-top: 5px;
-			}
-	
-	svg {
-		margin-top: 5px;
-		border-top: 1px dashed lightblue;
-	}
 
-		rect, line {
-			fill: none;
-			stroke-width: 1;
-			stroke: black;
-		}
+h2, fieldset {
+	line-height: 0;
+	margin-left: 7px;
+}
+
+fieldset {
+	border: 1px solid orange;
+}
+
+legend {
+	color: orange;
+}
+
+input {
+	margin-top: 5px;
+}
+
+svg {
+	margin-top: 5px;
+	border-top: 1px dashed lightblue;
+}
+
+rect, line {
+	fill: none;
+	stroke-width: 1;
+	stroke: black;
+}
