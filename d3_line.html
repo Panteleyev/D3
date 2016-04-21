@@ -70,7 +70,7 @@
 		var objectGridWidth = d3.select('#edW'),
 				gridWidth       = parseInt(objectGridWidth.property('value'), 10),
 				paddingX        = paddingLeft + paddingRight,
-				svgWidth        = d3.select('svg').style('width');
+				svgWidth        = parseInt(d3.select('svg').style('width'), 10);
 
 		if (gridWidth < 0)
 			objectGridWidth.property('value', 0);
@@ -87,7 +87,7 @@
 		var objectGridHeight = d3.select('#edH'),
 				gridHeight       = parseInt(objectGridHeight.property('value'), 10),
 				paddingY         = paddingTop + paddingBottom,
-				svgHeight        = d3.select('svg').style('height');
+				svgHeight        = parseInt(d3.select('svg').style('height'), 10);
 
 		if (gridHeight < 0)
 			objectGridHeight.property('value', 0);
