@@ -113,7 +113,8 @@
 	 * Построение сетки
 	 */
 	function setGrid() {
-		const paddingLeft = paddingTop = paddingRight = paddingBottom = 10,					// отступ сетки / для позиционирования
+		const DURATION    = 500,																										// длительность анимации
+					paddingLeft = paddingTop = paddingRight = paddingBottom = 10,					// отступ сетки / для позиционирования
 					linesMaxCount = 30;																										// максимальное количество строк/ столбцов
 
 		checkGridWidth(paddingLeft, paddingRight);
@@ -125,8 +126,8 @@
 				linesCount = parseInt(d3.select('#edCntLines').property('value'), 10);	// количество строк
 
 		if (!isNaN(gridWidth) && !isNaN(gridHeight) && !isNaN(linesCount)) {
-			var cellWidth  = gridWidth / linesCount,																// ширина ячейки
-					cellHeight = gridHeight / linesCount;																// высота ячейки
+			var cellWidth  = gridWidth / linesCount,																	// ширина ячейки
+					cellHeight = gridHeight / linesCount;																	// высота ячейки
 
 
 			var svg       = d3.select('svg'),
@@ -138,11 +139,11 @@
 				dataVerticalLine   = d3.range(0, gridWidth, cellWidth);
 			}
 
-			var frame          = svg.selectAll('rect').data(dataFrame);
+			var borderFrame    = svg.selectAll('rect').data(dataFrame);
 			var horizontalLine = svg.selectAll('line.hline').data(dataHorizontalLine);
 			var verticalLine   = svg.selectAll('line.vline').data(dataVerticalLine);
 
-			[frame.enter().append('rect'), frame].forEach(el => el.transition().duration(500).attr({
+			[borderFrame.enter().append('rect'), borderFrame].forEach(el => el.transition().duration(DURATION).attr({
 						'x':      paddingLeft,
 						'y':      paddingTop,
 						'width':  gridWidth,
@@ -150,9 +151,9 @@
 					})
 			);
 
-			frame.exit().remove();
+			borderFrame.exit().remove();
 
-			[horizontalLine.enter().append('line').attr('class', 'hline'), horizontalLine].forEach(el => el.transition().duration(500).attr({
+			[horizontalLine.enter().append('line').attr('class', 'hline'), horizontalLine].forEach(el => el.transition().duration(DURATION).attr({
 						'x1': paddingLeft,
 						'y1': i => {
 							return paddingTop + i
@@ -166,7 +167,7 @@
 
 			horizontalLine.exit().remove();
 
-			[verticalLine.enter().append('line').attr('class', 'vline'), verticalLine].forEach(el => el.transition().duration(500).attr({
+			[verticalLine.enter().append('line').attr('class', 'vline'), verticalLine].forEach(el => el.transition().duration(DURATION).attr({
 						'x1': i => {
 							return paddingTop + i
 						},

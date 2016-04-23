@@ -113,7 +113,8 @@
 	 * Построение сетки
 	 */
 	function setGrid() {
-		const paddingLeft = paddingTop = paddingRight = paddingBottom = 10,				// отступ сетки / для позиционирования
+		const DURATION    = 500,																									// длительность анимации
+					paddingLeft = paddingTop = paddingRight = paddingBottom = 10,				// отступ сетки / для позиционирования
 					linesMaxCount = 99;																									// максимальное количество строк/ столбцов
 
 		checkGridWidth(paddingLeft, paddingRight);
@@ -135,7 +136,7 @@
 
 			var rect = d3.select('svg').selectAll('rect').data(dataRect);
 
-			[rect.enter().append('rect'), rect].forEach(el => el.transition().duration(500).attr({
+			[rect.enter().append('rect'), rect].forEach(el => el.transition().duration(DURATION).attr({
 						'transform': i => {
 							return 'translate(' + (paddingLeft + i % linesCount * cellWidth) + ', ' + (paddingTop + ~~(i / linesCount) * cellHeight) + ')'
 						},
