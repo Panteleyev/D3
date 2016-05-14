@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lesson1 by Gleb Panteleyev // Line version</title>
+  <!--<link rel="stylesheet" href="resources/lesson1.css">-->
+  <style>
+    body, html {
+      margin: 0;
+    }
+
+    h2, fieldset {
+      line-height: 0;
+      margin-left: 7px;
+    }
+
+    fieldset {
+      border: 1px solid orange;
+    }
+
+    legend {
+      color: orange;
+    }
+
+    input {
+      margin-top: 5px;
+    }
+
+    svg {
+      margin-top: 5px;
+      border-top: 1px dashed lightblue;
+    }
+
+    rect, line {
+      fill: none;
+      stroke-width: 1;
+      stroke: black;
+    }
+  </style>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<h2>Рисование с помощью линии и прямоугольника</h2>
+<fieldset>
+  <legend>Настройка сетки</legend>
+  В сетке: <input type="number" id="edCntLines" value="10" min="1" title="Введите количество ячеек"
+                  max="30"/><sup>2</sup> ячеек<br/>
+  Ширина сетки: <input type="number" id="edW" value="400" min="0" max="4000" title="Введите ширину сетки" step="10"/>
+  пикселей<br/>
+  Высота сетки: <input type="number" id="edH" value="400" min="0" max="4000" title="Введите высоту сетки" step="10"/>
+  пикселей
+</fieldset>
+<svg width="100%" height="700"></svg>
+<script>
+  // type="text/ecmascript-6"
+  d3.select('#edW')
+      .on('keyup', setGrid)
+      .on('input', setGrid);
+  d3.select('#edH')
+      .on('keyup', setGrid)
+      .on('input', setGrid);
+  d3.select('#edCntLines')
+      .on('keyup', setGrid)
+      .on('input', setGrid);
+  d3.select(window)
+      .on('resize', setGrid);
+
+  /**
+   * Проверка введенного значения ширины сетки
+   * @param paddingLeft - Отступ слева.
+   * @param paddingRight - Отступ справа.
+   */
+  function checkGridWidth(paddingLeft, paddingRight) {
+    var objectGridWidth = d3.select('#edW'),
+        gridWidth       = parseInt(objectGridWidth.property('value'), 10),
+        paddingX        = paddingLeft + paddingRight,
+        svgWidth        = parseInt(d3.select('svg').style('width'), 10);
+
+    if (gridWidth < 0)
+      objectGridWidth.property('value', 0);
+    else if (gridWidth + paddingX > svgWidth)
+      objectGridWidth.property('value', svgWidth - paddingX);
+  }
+
+  /**
+   * Проверка введенного значения высоты сетки
+   * @param paddingTop - Отступ сверху.
+   * @param paddingBottom - Отступ снизу.
+   */
+  function checkGridHeight(paddingTop, paddingBottom) {
+    var objectGridHeight = d3.select('#edH'),
+        gridHeight       = parseInt(objectGridHeight.property('value'), 10),
+        paddingY         = paddingTop + paddingBottom,
+        svgHeight        = parseInt(d3.select('svg').style('height'), 10);
+
+    if (gridHeight < 0)
+      objectGridHeight.property('value', 0);
+    else if (gridHeight + paddingY > svgHeight)
+      objectGridHeight.property('value', svgHeight - paddingY);
+  }
+
+  /**
+   * Проверка введенного значения количества линий
+   * @param linesMaxCount - Максимальное количество линий по ширине/ высоте.
+   */
+  function checkLinesCount(linesMaxCount) {
+    var objectLinesCount = d3.select('#edCntLines'),
+        linesCount       = parseInt(objectLinesCount.property('value'), 10);
+
+    if (linesCount < 1)
+      objectLinesCount.property('value', 1);
+    else if (linesCount > linesMaxCount)
+      objectLinesCount.property('value', linesMaxCount);
+  }
+
+  /**
+   * Построение сетки
+   */
+  function setGrid() {
+    const DURATION    = 500,																										// длительность анимации
+          paddingLeft = paddingTop = paddingRight = paddingBottom = 10,					// отступ сетки / для позиционирования
+          linesMaxCount = 30;																										// максимальное количество строк/ столбцов
+
+    checkGridWidth(paddingLeft, paddingRight);
+    checkGridHeight(paddingTop, paddingBottom);
+    checkLinesCount(linesMaxCount);
+
+    var gridWidth  = parseInt(d3.select('#edW').property('value'), 10),					// ширина сетки
+        gridHeight = parseInt(d3.select('#edH').property('value'), 10),					// высота сетки
+        linesCount = parseInt(d3.select('#edCntLines').property('value'), 10);	// количество строк
+
+    if (!isNaN(gridWidth) && !isNaN(gridHeight) && !isNaN(linesCount)) {
+      var cellWidth  = gridWidth / linesCount,																	// ширина ячейки
+          cellHeight = gridHeight / linesCount;																	// высота ячейки
+
+
+      var svg       = d3.select('svg'),
+          dataFrame = dataHorizontalLine = dataVerticalLine = [];
+
+      if (gridWidth > 0 && gridHeight > 0) {
+        dataFrame          = d3.range(1);
+        dataHorizontalLine = d3.range(0, gridHeight, cellHeight);
+        dataVerticalLine   = d3.range(0, gridWidth, cellWidth);
+      }
+
+      var borderFrame    = svg.selectAll('rect').data(dataFrame);
+      var horizontalLine = svg.selectAll('line.hline').data(dataHorizontalLine);
+      var verticalLine   = svg.selectAll('line.vline').data(dataVerticalLine);
+
+      [borderFrame.enter().append('rect'), borderFrame].forEach(el => el.transition().duration(DURATION).attr({
+            'x':      paddingLeft,
+            'y':      paddingTop,
+            'width':  gridWidth,
+            'height': gridHeight
+          })
+      );
+
+      borderFrame.exit().remove();
+
+      [horizontalLine.enter().append('line').attr('class', 'hline'), horizontalLine].forEach(el => el.transition().duration(DURATION).attr({
+            'x1': paddingLeft,
+            'y1': i => {
+              return paddingTop + i
+            },
+            'x2': paddingLeft + gridWidth,
+            'y2': i => {
+              return paddingTop + i
+            }
+          })
+      );
+
+      horizontalLine.exit().remove();
+
+      [verticalLine.enter().append('line').attr('class', 'vline'), verticalLine].forEach(el => el.transition().duration(DURATION).attr({
+            'x1': i => {
+              return paddingTop + i
+            },
+            'y1': paddingTop,
+            'x2': i => {
+              return paddingTop + i
+            },
+            'y2': paddingTop + gridHeight
+          })
+      );
+
+      verticalLine.exit().remove();
+    }
+  }
+
+  setGrid();
+</script>
+</body>
+</html>
